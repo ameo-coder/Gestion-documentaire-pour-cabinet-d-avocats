@@ -30,7 +30,7 @@ Installez les dépendances :
 pip install -r requirements.txt
 
 Lancez l'application :
-start.bat
+server.py
 
 Accès à l'application :
 Ouvrez votre navigateur à l'adresse spécifiée par le serveur (par exemple : http://192.168.1.18:5000/)

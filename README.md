@@ -2,13 +2,15 @@
 
 Présentation du projet
 
-![alt text][logo]
+![alt text](https://github.com/ameo-coder/Gestion-documentaire-pour-cabinet-d-avocats/blob/main/Capture%20d'%C3%A9cran%202025-12-05%20174315.png "Logo Title Text 1")
 
-[logo]: https://github.com/ameo-coder/Gestion-documentaire-pour-cabinet-d-avocats/blob/main/Capture%20d'%C3%A9cran%202025-12-05%20174315.png
+Exemple :
 
 ![alt text][logo]
 
 [logo]: https://github.com/ameo-coder/Gestion-documentaire-pour-cabinet-d-avocats/blob/main/Capture%20d'%C3%A9cran%202025-11-18%20205906.png
+
+
 
 Ce système de gestion documentaire est conçu spécifiquement pour les cabinets d'avocats. Il permet d'organiser, d'indexer et de retrouver facilement tous vos documents juridiques.
 

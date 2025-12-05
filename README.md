@@ -12,6 +12,7 @@ Fonctionnalités principales
 - Interface web moderne et simple d'utilisation
 - Extraction de texte à partir de documents scannés et images
 - Gestion complète des documents : ajout, modification, suppression, téléchargement
+- Hébergé localement et accès possible à d'autres appareils connectés sur le même réseau à partir de l'adresse serveur
 
 Installation
 
@@ -29,7 +30,7 @@ Installez les dépendances :
 pip install -r requirements.txt
 
 Lancez l'application :
-start.py
+start.bat
 
 Accès à l'application :
-Ouvrez votre navigateur à l'adresse spécifiée par le serveur
+Ouvrez votre navigateur à l'adresse spécifiée par le serveur (par exemple : http://192.168.1.18:5000/)

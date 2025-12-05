@@ -22,7 +22,7 @@ Prérequis :
 
 Installation :
 Clonez le dépôt :
-git clone https://github.com/votre-username/gestion-documentaire-avocats.git
+git clone https://github.com/ameo-coder/gestion-documentaire-avocats.git
 cd gestion-documentaire-avocats
 
 Installez les dépendances :

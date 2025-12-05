@@ -1,2 +1,35 @@
-# Gestion-documentaire-pour-cabinet-d-avocats
-Système d'indexation et recherche avancée de documents juridiques (contrats, factures, correspondances). Attribuez spécialités et avocats responsables à chaque document. Interface web intuitive avec filtres multiples et téléchargement sécurisé. Solution professionnelle adaptée aux besoins spécifiques du secteur juridique.
+Gestion Documentaire pour Cabinet d'Avocats
+
+Présentation du projet
+
+Ce système de gestion documentaire est conçu spécifiquement pour les cabinets d'avocats. Il permet d'organiser, d'indexer et de retrouver facilement tous vos documents juridiques.
+
+Fonctionnalités principales
+
+- Indexation complète des documents (PDF, Word, images, etc.)
+- Recherche avancée par mots-clés, contenu ou métadonnées
+- Gestion des métadonnées : spécialités juridiques et avocats responsables
+- Interface web moderne et simple d'utilisation
+- Extraction de texte à partir de documents scannés et images
+- Gestion complète des documents : ajout, modification, suppression, téléchargement
+
+Installation
+
+Prérequis :
+- Python 3.8 ou supérieur
+- Elasticsearch (optionnel mais recommandé pour la recherche avancée)
+- Tesseract OCR (pour l'extraction de texte depuis les images)
+
+Installation :
+Clonez le dépôt :
+git clone https://github.com/votre-username/gestion-documentaire-avocats.git
+cd gestion-documentaire-avocats
+
+Installez les dépendances :
+pip install -r requirements.txt
+
+Lancez l'application :
+start.py
+
+Accès à l'application :
+Ouvrez votre navigateur à l'adresse spécifiée par le serveur

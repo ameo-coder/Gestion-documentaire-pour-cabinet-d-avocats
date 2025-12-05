@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabinet d'Avocats - Gestion des Documents</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .specialite-tag {
+            background: #9b59b6;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-advanced {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-advanced h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .toggle-advanced {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #34495e;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 1.2rem 2rem;
+            color: white;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .tab.active {
+            background: #3498db;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2.5rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 2.5rem;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        button.secondary {
+            background: #95a5a6;
+        }
+        
+        button.secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        button.danger {
+            background: #e74c3c;
+        }
+        
+        button.danger:hover {
+            background: #c0392b;
+        }
+        
+        button.small {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+        }
+        
+        .document-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .document-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+        }
+        
+        .document-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        
+        .document-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .avocat-tag {
+            background: #3498db;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .search-results {
+            margin-top: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 0.8rem;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .alert {
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .file-input-label:hover {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        
+        .avocat-form {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+        
+        .avocat-form .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        mark {
+            background-color: #ffeb3b;
+            padding: 0.2rem 0.3rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .search-header {
+            background: #e3f2fd;
+            border-left: 4px solid #3498db;
+        }
+        
+        .passage {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 1rem 1.2rem;
+            margin: 0.8rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .passages-container {
+            margin-top: 1.5rem;
+        }
+        
+        .passage-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .ocr-badge {
+            background: #e67e22;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .text-badge {
+            background: #27ae60;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .search-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto auto;
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .search-help {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3498db;
+        }
+        
+        .search-help ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .search-help li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .search-examples {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.8rem;
+        }
+        
+        .search-example-group {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .search-example-group h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .search-example-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .search-example-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-example-code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .search-example-desc {
+            color: #666;
+            font-size: 0.8rem;
+            text-align: right;
+        }
+        
+        @media (max-width: 1024px) {
+            .search-controls {
+                grid-template-columns: 1fr 1fr;
+            }
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-examples {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .tab {
+                padding: 1rem 1.2rem;
+                font-size: 0.9rem;
+                min-width: 120px;
+            }
+            
+            .tab-content {
+                padding: 1.5rem;
+            }
+            
+            .document-header {
+                flex-direction: column;
+                gap: 1.2rem;
+            }
+            
+            .document-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .avocat-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .avocat-form .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .search-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .document-meta {
+                gap: 1rem;
+            }
+            
+            .meta-item {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .tab {
+                padding: 0.8rem 1rem;
+                min-width: 100px;
+                font-size: 0.8rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        /* ===== SURBRILLANCE AMÉLIORÉE ===== */
+        mark {
+            background-color: #ffeb3b !important;
+            padding: 0.1rem 0.2rem !important;
+            border-radius: 2px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+        }
+
+        .passage mark {
+            background-color: #ffeb3b !important;
+            padding: 0.1rem 0.2rem !important;
+            font-weight: 700 !important;
+        }
+
+        .document-title mark {
+            background-color: #ffeb3b !important;
+            padding: 0.1rem 0.3rem !important;
+            border-radius: 3px !important;
+        }
+
+        /* Style pour les passages mis en évidence */
+        .passage {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 1rem 1.2rem;
+            margin: 0.8rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .passage::before {
+            content: "📌";
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .passage-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .highlight-count {
+            background: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestion Documentaire pour Cabinet d'avocats</h1>
+        </header>
+
+        <div class="app-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="search">
+                    <span>🔍</span>
+                    <span>Recherche</span>
+                </button>
+                <button class="tab" data-tab="upload">
+                    <span>📤</span>
+                    <span>Upload</span>
+                </button>
+                <button class="tab" data-tab="indexation">
+                    <span>📁</span>
+                    <span>Indexation</span>
+                </button>
+                <button class="tab" data-tab="documents">
+                    <span>📋</span>
+                    <span>Tous les Documents</span>
+                </button>
+                <button class="tab" data-tab="gestion">
+                    <span>⚙️</span>
+                    <span>Gestion</span>
+                </button>
+            </div>
+
+            <div id="alerts"></div>
+
+            <!-- Onglet Recherche -->
+            <div id="search-tab" class="tab-content active">
+                <div class="section">
+                    <h2>Recherche avancée dans les documents</h2>
+
+                    <div class="search-controls">
+                        <div class="form-group">
+                            <label for="search-query">Terme à rechercher :</label>
+                            <input type="text" id="search-query" placeholder='Saisissez votre recherche...'>
+                        </div>
+                        <div class="form-group">
+                            <button id="search-button">
+                                <span>🔍</span>
+                                <span>Lancer la recherche</span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <button class="secondary" id="clear-search-button">
+                                <span>🗑️</span>
+                                <span>Effacer</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="search-advanced">
+                        <button class="toggle-advanced" id="toggle-advanced">
+                            <span>▼</span>
+                            <span>Filtres avancés</span>
+                        </button>
+                        <div class="filters-grid hidden" id="advanced-filters">
+                            <div class="form-group">
+                                <label for="search-specialite">Spécialité juridique :</label>
+                                <select id="search-specialite">
+                                    <option value="">Toutes les spécialités</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="search-avocat">Avocat responsable :</label>
+                                <select id="search-avocat">
+                                    <option value="">Tous les avocats</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="search-categorie">Catégorie :</label>
+                                <select id="search-categorie">
+                                    <option value="">Toutes les catégories</option>
+                                    <option value="Contrats">Contrats</option>
+                                    <option value="Factures">Factures</option>
+                                    <option value="Correspondance">Correspondance</option>
+                                    <option value="Décisions">Décisions</option>
+                                    <option value="Divers">Divers</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+<div class="search-help">
+    <h3>💡 Aide à la recherche</h3>
+    <p><strong>Recherche flexible :</strong> Saisissez plusieurs mots-clés, l'ordre n'a pas d'importance</p>
+    
+    <div class="search-examples">
+        <div class="search-example-group">
+            <h4>🔍 Exemples de recherche :</h4>
+            <div class="search-example-item">
+                <div class="search-example-code">contrat travail</div>
+                <div class="search-example-desc">Trouve les documents contenant "contrat" ET "travail"</div>
+            </div>
+            <div class="search-example-item">
+                <div class="search-example-code">"contrat de travail"</div>
+                <div class="search-example-desc">Recherche exacte de l'expression</div>
+            </div>
+            <div class="search-example-item">
+                <div class="search-example-code">avocat:Dupont</div>
+                <div class="search-example-desc">Documents de Maître Dupont</div>
+            </div>
+        </div>
+        
+        <div class="search-example-group">
+            <h4>🎯 Conseils :</h4>
+            <div class="search-example-item">
+                <div class="search-example-desc">Utilisez plusieurs mots-clés pour affiner</div>
+            </div>
+            <div class="search-example-item">
+                <div class="search-example-desc">L'ordre des mots n'est pas important</div>
+            </div>
+            <div class="search-example-item">
+                <div class="search-example-desc">Les fautes de frappe sont corrigées</div>
+            </div>
+        </div>
+    </div>
+</div>
+                <div id="search-results" class="search-results">
+                    <div class="document-card">
+                        <div style="text-align: center; color: #7f8c8d; padding: 3rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+                            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Aucune recherche effectuée</p>
+                            <p style="font-size: 1rem;">Utilisez le formulaire ci-dessus pour rechercher dans les documents</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Upload -->
+            <div id="upload-tab" class="tab-content">
+                <div class="section">
+                    <h2>Uploader un nouveau document</h2>
+                    <form id="upload-form">
+                        <div class="form-group">
+                            <label for="titre">Titre du document :</label>
+                            <input type="text" id="titre" placeholder="Ex: Contrat de travail, Jugement, Consultation..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="avocat">Avocat responsable :</label>
+                            <select id="avocat" required>
+                                <option value="">Sélectionnez un avocat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="specialite">Spécialité juridique :</label>
+                            <select id="specialite" required>
+                                <option value="">Sélectionnez une spécialité</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="file">Fichier :</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="file" required>
+                                <div class="file-input-label" id="file-label">
+                                    📎 Cliquez pour sélectionner un fichier (PDF, DOC, TXT, JPG, PNG, etc.)
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" id="upload-button">
+                            <span>📤</span>
+                            <span>Uploader le document</span>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="section">
+                    <h3>Formats supportés</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="document-card">
+                            <div style="font-weight: 600; color: #3498db; margin-bottom: 0.5rem;">📝 Documents texte</div>
+                            <div>TXT, DOC, DOCX, RTF</div>
+                        </div>
+                        <div class="document-card">
+                            <div style="font-weight: 600; color: #e67e22; margin-bottom: 0.5rem;">🔍 Documents OCR</div>
+                            <div>PDF, JPG, PNG, TIFF</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Indexation -->
+            <div id="indexation-tab" class="tab-content">
+                <div class="section">
+                    <h2>Indexation des dossiers locaux</h2>
+                    <div class="form-group">
+                        <label for="dossiers-indexation">Dossiers à indexer (un par ligne) :</label>
+                        <textarea id="dossiers-indexation" rows="4" placeholder="C:\MesDocuments\Contrats&#10;C:\MesDocuments\Factures&#10;\\serveur\partage\documents"></textarea>
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">
+                            💡 Vous pouvez spécifier des chemins locaux (C:\...) ou des chemins réseau (\\serveur\...)
+                        </small>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label for="indexation-specialite">Spécialité juridique :</label>
+                            <select id="indexation-specialite">
+                                <option value="Non spécifiée">Non spécifiée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="indexation-avocat">Avocat responsable :</label>
+                            <select id="indexation-avocat">
+                                <option value="Non attribué">Non attribué</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="lancer-indexation-button">
+                        <span>🚀</span>
+                        <span>Lancer l'indexation</span>
+                    </button>
+                    
+                    <div id="statut-indexation" style="margin-top: 1.5rem;"></div>
+                </div>
+            </div>
+
+            <!-- Onglet Tous les documents -->
+            <div id="documents-tab" class="tab-content">
+                <div class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Tous les documents</h2>
+                        <button class="secondary" id="refresh-button">
+                            <span>🔄</span>
+                            <span>Actualiser</span>
+                        </button>
+                    </div>
+                    <div id="all-documents" class="search-results">
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 3rem;">
+                                <div class="loading" style="margin: 0 auto 1rem;"></div>
+                                <p>Chargement des documents...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Gestion -->
+            <div id="gestion-tab" class="tab-content">
+                <div class="section">
+                    <h2>Gestion des spécialités juridiques</h2>
+                    <div class="form-group">
+                        <label for="nouvelle-specialite">Ajouter une nouvelle spécialité :</label>
+                        <div class="avocat-form">
+                            <div class="form-group">
+                                <input type="text" id="nouvelle-specialite" placeholder="Nom de la nouvelle spécialité">
+                            </div>
+                            <button id="add-specialite-button">
+                                <span>➕</span>
+                                <span>Ajouter</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 2rem;">Liste des spécialités</h3>
+                    <div id="liste-specialites" class="search-results">
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                <div class="loading" style="margin: 0 auto 1rem;"></div>
+                                <p>Chargement des spécialités...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Gestion des avocats</h2>
+                    <div class="form-group">
+                        <label for="nouvel-avocat">Ajouter un nouvel avocat :</label>
+                        <div class="avocat-form">
+                            <div class="form-group">
+                                <input type="text" id="nouvel-avocat" placeholder="Nom du nouvel avocat">
+                            </div>
+                            <button id="add-avocat-button">
+                                <span>➕</span>
+                                <span>Ajouter</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 2rem;">Liste des avocats</h3>
+                    <div id="liste-avocats" class="search-results">
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                <div class="loading" style="margin: 0 auto 1rem;"></div>
+                                <p>Chargement des avocats...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Statistiques du système</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-documents">0</div>
+                            <div class="stat-label">Documents totaux</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-avocats">0</div>
+                            <div class="stat-label">Avocats enregistrés</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-specialites">0</div>
+                            <div class="stat-label">Spécialités</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="moteur-recherche">0</div>
+                            <div class="stat-label">Documents OCR</div>
+                        </div>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div id="specialites-stats" style="flex: 1;"></div>
+                        <div id="avocats-stats" style="flex: 1;"></div>
+                    </div>
+                    
+                    <div id="types-fichier-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentAvocats = [];
+        let currentSpecialites = [];
+
+        // Navigation par onglets
+        function showTab(tabName) {
+            console.log('Changement d\'onglet:', tabName);
+            
+            // Masquer tous les onglets
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activer l'onglet sélectionné
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Charger les données si nécessaire
+            if (tabName === 'documents') {
+                loadAllDocuments();
+            } else if (tabName === 'gestion') {
+                loadStats();
+                loadListeSpecialites();
+                loadListeAvocats();
+            } else if (tabName === 'upload') {
+                loadAvocatsForUpload();
+                loadSpecialitesForUpload();
+            } else if (tabName === 'indexation') {
+                loadSpecialitesForIndexation();
+                loadAvocatsForIndexation();
+            }
+        }
+
+        // Gestion des alertes
+        function showAlert(message, type) {
+            const alertsDiv = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alertsDiv.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Charger la liste des spécialités
+        async function loadSpecialites() {
+            try {
+                const response = await fetch('/api/specialites');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                currentSpecialites = data.specialites || [];
+                const specialiteSelect = document.getElementById('search-specialite');
+                
+                specialiteSelect.innerHTML = '<option value="">Toutes les spécialités</option>';
+                
+                currentSpecialites.forEach(specialite => {
+                    const option1 = document.createElement('option');
+                    option1.value = specialite;
+                    option1.textContent = specialite;
+                    specialiteSelect.appendChild(option1);
+                });
+                
+                console.log('Spécialités chargées:', currentSpecialites);
+                
+            } catch (error) {
+                console.error('Erreur chargement spécialités:', error);
+                showAlert('Erreur lors du chargement des spécialités: ' + error.message, 'error');
+            }
+        }
+
+        // Charger les spécialités pour l'upload
+        async function loadSpecialitesForUpload() {
+            try {
+                const response = await fetch('/api/specialites');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const specialiteSelect = document.getElementById('specialite');
+                specialiteSelect.innerHTML = '<option value="">Sélectionnez une spécialité</option>';
+                
+                data.specialites.forEach(specialite => {
+                    const option = document.createElement('option');
+                    option.value = specialite;
+                    option.textContent = specialite;
+                    specialiteSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement spécialités upload:', error);
+            }
+        }
+
+        // Charger les spécialités pour l'indexation
+        async function loadSpecialitesForIndexation() {
+            try {
+                const response = await fetch('/api/specialites');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const specialiteSelect = document.getElementById('indexation-specialite');
+                specialiteSelect.innerHTML = '<option value="Non spécifiée">Non spécifiée</option>';
+                
+                data.specialites.forEach(specialite => {
+                    const option = document.createElement('option');
+                    option.value = specialite;
+                    option.textContent = specialite;
+                    specialiteSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement spécialités indexation:', error);
+            }
+        }
+
+        // Charger la liste des avocats pour les selects
+        async function loadAvocats() {
+            try {
+                console.log('Chargement des avocats...');
+                const response = await fetch('/api/avocats');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                currentAvocats = data.avocats || [];
+                const avocatSelect = document.getElementById('search-avocat');
+                
+                avocatSelect.innerHTML = '<option value="">Tous les avocats</option>';
+                
+                currentAvocats.forEach(avocat => {
+                    const option = document.createElement('option');
+                    option.value = avocat;
+                    option.textContent = avocat;
+                    avocatSelect.appendChild(option);
+                });
+                
+                console.log('Avocats chargés:', currentAvocats);
+                
+            } catch (error) {
+                console.error('Erreur chargement avocats:', error);
+                showAlert('Erreur lors du chargement des avocats: ' + error.message, 'error');
+            }
+        }
+
+        // Charger les avocats pour l'upload
+        async function loadAvocatsForUpload() {
+            try {
+                const response = await fetch('/api/avocats');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const avocatSelect = document.getElementById('avocat');
+                avocatSelect.innerHTML = '<option value="">Sélectionnez un avocat</option>';
+                
+                data.avocats.forEach(avocat => {
+                    const option = document.createElement('option');
+                    option.value = avocat;
+                    option.textContent = avocat;
+                    avocatSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement avocats upload:', error);
+            }
+        }
+
+        // Charger les avocats pour l'indexation
+        async function loadAvocatsForIndexation() {
+            try {
+                const response = await fetch('/api/avocats');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const avocatSelect = document.getElementById('indexation-avocat');
+                avocatSelect.innerHTML = '<option value="Non attribué">Non attribué</option>';
+                
+                data.avocats.forEach(avocat => {
+                    const option = document.createElement('option');
+                    option.value = avocat;
+                    option.textContent = avocat;
+                    avocatSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement avocats indexation:', error);
+            }
+        }
+
+        // Recherche de documents
+        async function performSearch() {
+            console.log('Lancement de la recherche...');
+            const query = document.getElementById('search-query').value;
+            const specialite = document.getElementById('search-specialite').value;
+            const avocat = document.getElementById('search-avocat').value;
+            const categorie = document.getElementById('search-categorie').value;
+            const searchButton = document.getElementById('search-button');
+            
+            if (!query && !specialite && !avocat && !categorie) {
+                showAlert('Veuillez saisir un terme de recherche ou sélectionner au moins un filtre', 'error');
+                return;
+            }
+            
+            try {
+                const originalText = searchButton.innerHTML;
+                searchButton.innerHTML = '<div class="loading"></div> Recherche...';
+                searchButton.disabled = true;
+                
+                const params = new URLSearchParams();
+                if (query) params.append('q', query);
+                if (specialite) params.append('specialite', specialite);
+                if (avocat) params.append('avocat', avocat);
+                if (categorie) params.append('categorie', categorie);
+                
+                console.log('Paramètres de recherche:', { query, specialite, avocat, categorie });
+                
+                const response = await fetch(`/recherche/avancee?${params}`);
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                console.log('Résultats de recherche:', data.resultats);
+                displayDocuments(data.resultats, 'search-results', data.terme, data.moteur_recherche);
+                
+                if (data.resultats.length === 0) {
+                    showAlert('Aucun document trouvé avec ces critères de recherche', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erreur recherche:', error);
+                showAlert('Erreur lors de la recherche: ' + error.message, 'error');
+            } finally {
+                searchButton.innerHTML = '<span>🔍</span><span>Lancer la recherche</span>';
+                searchButton.disabled = false;
+            }
+        }
+
+        // Effacer la recherche
+        function clearSearch() {
+            console.log('Effacement de la recherche');
+            document.getElementById('search-query').value = '';
+            document.getElementById('search-specialite').value = '';
+            document.getElementById('search-avocat').value = '';
+            document.getElementById('search-categorie').value = '';
+            document.getElementById('search-results').innerHTML = `
+                <div class="document-card">
+                    <div style="text-align: center; color: #7f8c8d; padding: 3rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+                        <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Aucune recherche effectuée</p>
+                        <p style="font-size: 1rem;">Utilisez le formulaire ci-dessus pour rechercher dans les documents</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Charger tous les documents
+        async function loadAllDocuments() {
+            console.log('Chargement de tous les documents...');
+            const refreshButton = document.getElementById('refresh-button');
+            
+            try {
+                const originalText = refreshButton.innerHTML;
+                refreshButton.innerHTML = '<div class="loading"></div>';
+                refreshButton.disabled = true;
+                
+                const response = await fetch('/api/documents');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                console.log('Documents chargés:', data.documents);
+                displayDocuments(data.documents, 'all-documents');
+                
+            } catch (error) {
+                console.error('Erreur chargement documents:', error);
+                showAlert('Erreur lors du chargement des documents: ' + error.message, 'error');
+            } finally {
+                refreshButton.innerHTML = '<span>🔄</span><span>Actualiser</span>';
+                refreshButton.disabled = false;
+            }
+        }
+
+        // Afficher les documents avec surbrillance améliorée
+        function displayDocuments(documents, containerId, searchQuery = '', moteurRecherche = '') {
+            const container = document.getElementById(containerId);
+            
+            if (!documents || documents.length === 0) {
+                container.innerHTML = `
+                    <div class="document-card">
+                        <div style="text-align: center; color: #7f8c8d; padding: 3rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+                            <p style="font-size: 1.2rem;">Aucun document trouvé</p>
+                            ${searchQuery ? `<p style="font-size: 1rem; margin-top: 0.5rem;">Aucun résultat pour "<strong>${escapeHtml(searchQuery)}</strong>"</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let headerHtml = '';
+            if (searchQuery) {
+                headerHtml = `
+                    <div class="document-card search-header">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">🔍</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">Résultats pour :</strong> "${escapeHtml(searchQuery)}"
+                                <div style="font-size: 0.95rem; color: #666; margin-top: 0.3rem;">
+                                    ${documents.length} document(s) trouvé(s) ${moteurRecherche ? `(Moteur: ${moteurRecherche})` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = headerHtml + documents.map(doc => {
+                // Gestion de la surbrillance
+                let titreAffiche = doc.nom || 'Sans titre';
+                let contenuAffiche = doc.contenu_textuel || 'Aucun contenu extrait';
+                let passagesHtml = '';
+                let highlightCount = 0;
+                
+                // Utiliser les highlights d'Elasticsearch si disponibles
+                if (doc.highlight) {
+                    // Titre avec surbrillance
+                    if (doc.highlight.nom && doc.highlight.nom.length > 0) {
+                        titreAffiche = doc.highlight.nom[0];
+                        highlightCount += doc.highlight.nom.length;
+                    }
+                    
+                    // Contenu avec passages mis en évidence
+                    if (doc.highlight.contenu_textuel && doc.highlight.contenu_textuel.length > 0) {
+                        const passages = doc.highlight.contenu_textuel.map(passage => {
+                            // Compter les balises <mark> dans le passage
+                            const matchCount = (passage.match(/<mark>/g) || []).length;
+                            highlightCount += matchCount;
+                            return passage;
+                        });
+                        
+                        passagesHtml = `
+                            <div class="passages-container">
+                                <div class="passage-title">
+                                    📌 Passages pertinents 
+                                    ${highlightCount > 0 ? `<span class="highlight-count">${highlightCount} correspondance(s)</span>` : ''}
+                                </div>
+                                ${passages.map(passage => `
+                                    <div class="passage">
+                                        ...${passage}...
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        
+                        // Pour l'extrait principal, utiliser le premier passage
+                        contenuAffiche = doc.highlight.contenu_textuel[0];
+                    }
+                    
+                    // Mots-clés en surbrillance
+                    if (doc.highlight.mots_cles && doc.highlight.mots_cles.length > 0) {
+                        highlightCount += doc.highlight.mots_cles.length;
+                    }
+                    
+                    // Autres champs
+                    if (doc.highlight.specialite && doc.highlight.specialite.length > 0) {
+                        highlightCount += doc.highlight.specialite.length;
+                    }
+                    if (doc.highlight.avocat && doc.highlight.avocat.length > 0) {
+                        highlightCount += doc.highlight.avocat.length;
+                    }
+                    if (doc.highlight.categorie && doc.highlight.categorie.length > 0) {
+                        highlightCount += doc.highlight.categorie.length;
+                    }
+                }
+                
+                // Fallback : si pas de highlight mais recherche active, essayer de mettre en surbrillance manuellement
+                if (searchQuery && (!doc.highlight || highlightCount === 0)) {
+                    passagesHtml = genererSurbrillanceManuelle(doc, searchQuery);
+                }
+                
+                // Éviter d'afficher les messages d'erreur techniques
+                if (contenuAffiche.startsWith('[') && contenuAffiche.endsWith(']')) {
+                    contenuAffiche = 'Contenu non disponible pour ce type de fichier';
+                }
+                
+                const isOCR = doc.type_fichier === 'OCR';
+                const isTexte = doc.type_fichier === 'texte';
+                const typeBadge = isOCR ? 
+                    '<span class="ocr-badge">🔍 OCR</span>' : 
+                    isTexte ?
+                    '<span class="text-badge">📝 Texte</span>' :
+                    '<span class="meta-item">📄 Standard</span>';
+                
+                return `
+                <div class="document-card">
+                    <div class="document-header">
+                        <div style="flex: 1;">
+                            <div class="document-title">${titreAffiche}</div>
+                            <div class="document-meta">
+                                <div class="meta-item">
+                                    <span class="specialite-tag">${doc.specialite || 'Non spécifiée'}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="avocat-tag">${doc.avocat || 'Non attribué'}</span>
+                                </div>
+                                <div class="meta-item">
+                                    ${typeBadge}
+                                </div>
+                                <div class="meta-item">
+                                    📄 ${doc.extension || 'sans extension'}
+                                </div>
+                                <div class="meta-item">
+                                    📅 ${doc.date_modification ? new Date(doc.date_modification).toLocaleDateString('fr-FR') : 'Date inconnue'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button onclick="downloadDocument('${doc.id}')" class="secondary">
+                                <span>📥</span>
+                                <span>Télécharger</span>
+                            </button>
+                            <button onclick="editDocument('${doc.id}')" class="secondary">
+                                <span>✏️</span>
+                                <span>Modifier</span>
+                            </button>
+                            <button onclick="deleteDocument('${doc.id}')" class="danger">
+                                <span>🗑️</span>
+                                <span>Supprimer</span>
+                            </button>
+                        </div>
+                    </div>
+                    ${passagesHtml}
+                    <div style="color: #666; font-size: 0.95rem; line-height: 1.5; margin-top: 1.2rem;">
+                        <strong>Extrait du contenu :</strong> ${contenuAffiche.substring(0, 300)}${contenuAffiche.length > 300 ? '...' : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Fonction de fallback pour la surbrillance manuelle
+        function genererSurbrillanceManuelle(doc, searchQuery) {
+            const termes = searchQuery.toLowerCase().split(' ').filter(term => 
+                term.length > 2 && !['et', 'ou', 'de', 'la', 'le', 'les', 'du', 'des'].includes(term)
+            );
+            
+            let passagesTrouves = [];
+            
+            // Chercher dans le contenu
+            if (doc.contenu_textuel) {
+                const contenu = doc.contenu_textuel.toLowerCase();
+                termes.forEach(terme => {
+                    if (terme && contenu.includes(terme)) {
+                        const index = contenu.indexOf(terme);
+                        const debut = Math.max(0, index - 50);
+                        const fin = Math.min(contenu.length, index + terme.length + 100);
+                        let passage = doc.contenu_textuel.substring(debut, fin);
+                        
+                        // Mettre en surbrillance le terme
+                        passage = passage.replace(new RegExp(terme, 'gi'), '<mark>$&</mark>');
+                        passagesTrouves.push(`...${passage}...`);
+                    }
+                });
+            }
+            
+            if (passagesTrouves.length > 0) {
+                return `
+                    <div class="passages-container">
+                        <div class="passage-title">
+                            📌 Correspondances trouvées
+                            <span class="highlight-count">${passagesTrouves.length} passage(s)</span>
+                        </div>
+                        ${passagesTrouves.slice(0, 3).map(passage => `
+                            <div class="passage">
+                                ${passage}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            return '';
+        }
+
+        // Lancer l'indexation des dossiers
+        async function lancerIndexation() {
+            const dossiersText = document.getElementById('dossiers-indexation').value;
+            const specialite = document.getElementById('indexation-specialite').value;
+            const avocat = document.getElementById('indexation-avocat').value;
+            const button = document.getElementById('lancer-indexation-button');
+            const statutDiv = document.getElementById('statut-indexation');
+            
+            if (!dossiersText.trim()) {
+                showAlert('Veuillez saisir au moins un dossier à indexer', 'error');
+                return;
+            }
+            
+            const dossiers = dossiersText.split('\n').filter(d => d.trim());
+            
+            try {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<div class="loading"></div> Indexation...';
+                button.disabled = true;
+                statutDiv.innerHTML = '<div class="alert">🚀 Début de l\'indexation...</div>';
+                
+                const response = await fetch('/indexer/lancer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        dossiers: dossiers,
+                        specialite: specialite,
+                        avocat: avocat
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.erreur || `Erreur HTTP: ${response.status}`);
+                }
+                
+                if (data.success) {
+                    const ocrInfo = data.statistiques.ocr_utilise ? ' (OCR utilisé)' : '';
+                    statutDiv.innerHTML = `
+                        <div class="alert success">
+                            ✅ Indexation terminée avec succès${ocrInfo} !
+                            <br>Fichiers indexés: ${data.fichiers_indexes}
+                            <br>Dossiers traités: ${data.statistiques.dossiers_indexes.length}
+                        </div>
+                    `;
+                    showAlert('Indexation terminée avec succès!' + ocrInfo, 'success');
+                } else {
+                    statutDiv.innerHTML = `<div class="alert error">❌ Erreur lors de l'indexation: ${data.erreur}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Erreur indexation:', error);
+                statutDiv.innerHTML = `<div class="alert error">❌ Erreur lors de l'indexation: ${error.message}</div>`;
+                showAlert('Erreur lors de l\'indexation: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = '<span>🚀</span><span>Lancer l\'indexation</span>';
+                button.disabled = false;
+            }
+        }
+
+        // Charger les statistiques
+        async function loadStats() {
+            try {
+                const response = await fetch('/statistiques');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                document.getElementById('total-documents').textContent = data.fichiers_total || 0;
+                document.getElementById('total-avocats').textContent = Object.keys(data.avocats || {}).length || 0;
+                document.getElementById('total-specialites').textContent = Object.keys(data.specialites || {}).length || 0;
+                
+                // Compter les documents OCR
+                const ocrCount = data.types_fichier ? (data.types_fichier.OCR || 0) : 0;
+                document.getElementById('moteur-recherche').textContent = ocrCount;
+                
+                // Statistiques par spécialité
+                const specialitesStatsDiv = document.getElementById('specialites-stats');
+                specialitesStatsDiv.innerHTML = '<h3>Documents par spécialité</h3>';
+                
+                if (!data.specialites || Object.keys(data.specialites).length === 0) {
+                    specialitesStatsDiv.innerHTML += `
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                Aucune spécialité attribuée
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    for (const [specialite, count] of Object.entries(data.specialites)) {
+                        const statDiv = document.createElement('div');
+                        statDiv.className = 'document-card';
+                        statDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><strong>${escapeHtml(specialite)}</strong></span>
+                                <span class="specialite-tag">${count} document(s)</span>
+                            </div>
+                        `;
+                        specialitesStatsDiv.appendChild(statDiv);
+                    }
+                }
+                
+                // Statistiques par avocat
+                const avocatsStatsDiv = document.getElementById('avocats-stats');
+                avocatsStatsDiv.innerHTML = '<h3>Documents par avocat</h3>';
+                
+                if (!data.avocats || Object.keys(data.avocats).length === 0) {
+                    avocatsStatsDiv.innerHTML += `
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                Aucun document attribué
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    for (const [avocat, count] of Object.entries(data.avocats)) {
+                        const statDiv = document.createElement('div');
+                        statDiv.className = 'document-card';
+                        statDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><strong>${escapeHtml(avocat)}</strong></span>
+                                <span class="avocat-tag">${count} document(s)</span>
+                            </div>
+                        `;
+                        avocatsStatsDiv.appendChild(statDiv);
+                    }
+                }
+                
+                // Statistiques par type de fichier
+                const typesFichierStatsDiv = document.getElementById('types-fichier-stats');
+                typesFichierStatsDiv.innerHTML = '<h3>Types de fichiers</h3>';
+                
+                if (!data.types_fichier || Object.keys(data.types_fichier).length === 0) {
+                    typesFichierStatsDiv.innerHTML += `
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                Aucune statistique de type
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    for (const [type, count] of Object.entries(data.types_fichier)) {
+                        const statDiv = document.createElement('div');
+                        statDiv.className = 'document-card';
+                        const badge = type === 'OCR' ? 'ocr-badge' : type === 'texte' ? 'text-badge' : 'avocat-tag';
+                        statDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><strong>${escapeHtml(type)}</strong></span>
+                                <span class="${badge}">${count} document(s)</span>
+                            </div>
+                        `;
+                        typesFichierStatsDiv.appendChild(statDiv);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Erreur chargement stats:', error);
+            }
+        }
+
+        // Charger et afficher la liste des spécialités pour gestion
+        async function loadListeSpecialites() {
+            try {
+                const response = await fetch('/api/specialites');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const container = document.getElementById('liste-specialites');
+                container.innerHTML = '';
+                
+                if (!data.specialites || data.specialites.length === 0) {
+                    container.innerHTML = `
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                Aucune spécialité enregistrée
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.specialites.forEach(specialite => {
+                    const specialiteDiv = document.createElement('div');
+                    specialiteDiv.className = 'document-card';
+                    specialiteDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <strong style="font-size: 1.1rem;">${escapeHtml(specialite)}</strong>
+                            </div>
+                            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                                <button onclick="modifierSpecialite('${escapeHtml(specialite)}')" class="secondary small">
+                                    <span>✏️</span>
+                                    <span>Modifier</span>
+                                </button>
+                                <button onclick="supprimerSpecialite('${escapeHtml(specialite)}')" class="danger small">
+                                    <span>🗑️</span>
+                                    <span>Supprimer</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(specialiteDiv);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement spécialités:', error);
+                showAlert('Erreur lors du chargement des spécialités', 'error');
+            }
+        }
+
+        // Charger et afficher la liste des avocats pour gestion
+        async function loadListeAvocats() {
+            try {
+                const response = await fetch('/api/avocats');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const container = document.getElementById('liste-avocats');
+                container.innerHTML = '';
+                
+                if (!data.avocats || data.avocats.length === 0) {
+                    container.innerHTML = `
+                        <div class="document-card">
+                            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                                Aucun avocat enregistré
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.avocats.forEach(avocat => {
+                    const avocatDiv = document.createElement('div');
+                    avocatDiv.className = 'document-card';
+                    avocatDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <strong style="font-size: 1.1rem;">${escapeHtml(avocat)}</strong>
+                            </div>
+                            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                                <button onclick="modifierAvocat('${escapeHtml(avocat)}')" class="secondary small">
+                                    <span>✏️</span>
+                                    <span>Modifier</span>
+                                </button>
+                                <button onclick="supprimerAvocat('${escapeHtml(avocat)}')" class="danger small">
+                                    <span>🗑️</span>
+                                    <span>Supprimer</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(avocatDiv);
+                });
+                
+            } catch (error) {
+                console.error('Erreur chargement avocats:', error);
+                showAlert('Erreur lors du chargement des avocats', 'error');
+            }
+        }
+
+       // Ajouter une spécialité
+async function ajouterSpecialite() {
+    const input = document.getElementById('nouvelle-specialite');
+    const nom = input.value.trim();
+    const button = document.getElementById('add-specialite-button');
+    
+    if (!nom) {
+        showAlert('Veuillez saisir un nom de spécialité', 'error');
+        return;
+    }
+    
+    try {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<div class="loading"></div>';
+        button.disabled = true;
+        
+        const response = await fetch('/api/specialites', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ specialite: nom })
+        });
+        
+        // Vérifier d'abord le statut HTTP
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erreur HTTP ajout spécialité:', response.status, errorText);
+            throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+        }
+        
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error('Erreur parsing JSON ajout spécialité:', jsonError);
+            throw new Error('Réponse invalide du serveur lors de l\'ajout');
+        }
+        
+        if (data.success) {
+            showAlert('✅ Spécialité ajoutée avec succès', 'success');
+            input.value = '';
+            loadSpecialites();
+            loadSpecialitesForUpload();
+            loadSpecialitesForIndexation();
+            loadListeSpecialites();
+            loadStats();
+        } else {
+            showAlert('❌ ' + (data.erreur || data.error), 'error');
+        }
+        
+    } catch (error) {
+        console.error('Erreur ajout spécialité:', error);
+        showAlert('❌ Erreur lors de l\'ajout: ' + error.message, 'error');
+    } finally {
+        button.innerHTML = '<span>➕</span><span>Ajouter</span>';
+        button.disabled = false;
+    }
+}
+
+       // Modifier une spécialité
+async function modifierSpecialite(ancienNom) {
+    const nouveauNom = prompt(`Modifier le nom de la spécialité :`, ancienNom);
+    
+    if (nouveauNom === null) return;
+    
+    const nomTrim = nouveauNom.trim();
+    if (nomTrim === '' || nomTrim === ancienNom) {
+        if (nomTrim === ancienNom) {
+            showAlert('Le nouveau nom est identique à l\'ancien', 'error');
+        }
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/specialites/${encodeURIComponent(ancienNom)}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nouveau_nom: nomTrim
+            })
+        });
+        
+        // Vérifier d'abord le statut HTTP
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erreur HTTP modification spécialité:', response.status, errorText);
+            throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+        }
+        
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error('Erreur parsing JSON modification spécialité:', jsonError);
+            throw new Error('Réponse invalide du serveur lors de la modification');
+        }
+        
+        if (data.success) {
+            showAlert('✅ ' + data.message, 'success');
+            loadSpecialites();
+            loadSpecialitesForUpload();
+            loadSpecialitesForIndexation();
+            loadListeSpecialites();
+            loadStats();
+            loadAllDocuments();
+        } else {
+            showAlert('❌ ' + data.erreur, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Erreur modification spécialité:', error);
+        showAlert('❌ Erreur lors de la modification: ' + error.message, 'error');
+    }
+}
+
+        // Supprimer une spécialité
+        async function supprimerSpecialite(nom) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer la spécialité "${nom}" ?\n\nCette action est irréversible.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/specialites', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ specialite: nom })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                }
+                
+                if (data.success) {
+                    showAlert('✅ Spécialité supprimée avec succès', 'success');
+                    loadSpecialites();
+                    loadSpecialitesForUpload();
+                    loadSpecialitesForIndexation();
+                    loadListeSpecialites();
+                    loadStats();
+                } else {
+                    if (data.count) {
+                        showAlert(`❌ ${data.error} (${data.count} document(s) associé(s))`, 'error');
+                    } else {
+                        showAlert('❌ ' + data.error, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Erreur suppression spécialité:', error);
+                showAlert('❌ Erreur lors de la suppression: ' + error.message, 'error');
+            }
+        }
+
+        // Ajouter un avocat
+        async function ajouterAvocat() {
+            const input = document.getElementById('nouvel-avocat');
+            const nom = input.value.trim();
+            const button = document.getElementById('add-avocat-button');
+            
+            if (!nom) {
+                showAlert('Veuillez saisir un nom', 'error');
+                return;
+            }
+            
+            try {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<div class="loading"></div>';
+                button.disabled = true;
+                
+                const response = await fetch('/api/avocats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nom: nom })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                }
+                
+                if (data.success) {
+                    showAlert('✅ Avocat ajouté avec succès', 'success');
+                    input.value = '';
+                    loadAvocats();
+                    loadAvocatsForUpload();
+                    loadAvocatsForIndexation();
+                    loadListeAvocats();
+                    loadStats();
+                } else {
+                    showAlert('❌ ' + data.error, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erreur ajout avocat:', error);
+                showAlert('❌ Erreur lors de l\'ajout: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = '<span>➕</span><span>Ajouter</span>';
+                button.disabled = false;
+            }
+        }
+
+        // Modifier un avocat
+        async function modifierAvocat(ancienNom) {
+            const nouveauNom = prompt(`Modifier le nom de l'avocat :`, ancienNom);
+            
+            if (nouveauNom === null) return;
+            
+            const nomTrim = nouveauNom.trim();
+            if (nomTrim === '' || nomTrim === ancienNom) {
+                if (nomTrim === ancienNom) {
+                    showAlert('Le nouveau nom est identique à l\'ancien', 'error');
+                }
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/avocats/${encodeURIComponent(ancienNom)}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nouveau_nom: nomTrim
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                }
+                
+                if (data.success) {
+                    showAlert('✅ ' + data.message, 'success');
+                    loadAvocats();
+                    loadAvocatsForUpload();
+                    loadAvocatsForIndexation();
+                    loadListeAvocats();
+                    loadStats();
+                    loadAllDocuments();
+                } else {
+                    showAlert('❌ ' + data.error, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erreur modification avocat:', error);
+                showAlert('❌ Erreur lors de la modification: ' + error.message, 'error');
+            }
+        }
+
+        // Supprimer un avocat
+        async function supprimerAvocat(nom) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer l'avocat "${nom}" ?\n\nCette action supprimera seulement l'avocat de la liste, pas ses documents.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/avocats/${encodeURIComponent(nom)}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                }
+                
+                if (data.success) {
+                    showAlert('✅ ' + data.message, 'success');
+                    loadAvocats();
+                    loadAvocatsForUpload();
+                    loadAvocatsForIndexation();
+                    loadListeAvocats();
+                    loadStats();
+                } else {
+                    if (data.count) {
+                        showAlert(`❌ ${data.error} (${data.count} document(s) associé(s))`, 'error');
+                    } else {
+                        showAlert('❌ ' + data.error, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Erreur suppression avocat:', error);
+                showAlert('❌ Erreur lors de la suppression: ' + error.message, 'error');
+            }
+        }
+
+        // Toggle des filtres avancés
+        function toggleAdvancedFilters() {
+            const filters = document.getElementById('advanced-filters');
+            const toggle = document.getElementById('toggle-advanced');
+            
+            if (filters.classList.contains('hidden')) {
+                filters.classList.remove('hidden');
+                toggle.innerHTML = '<span>▼</span><span>Masquer les filtres avancés</span>';
+            } else {
+                filters.classList.add('hidden');
+                toggle.innerHTML = '<span>▶</span><span>Afficher les filtres avancés</span>';
+            }
+        }
+
+      // Upload de document
+document.getElementById('upload-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('titre', document.getElementById('titre').value);
+    formData.append('avocat', document.getElementById('avocat').value);
+    formData.append('specialite', document.getElementById('specialite').value);
+    formData.append('file', document.getElementById('file').files[0]);
+    
+    const uploadButton = document.getElementById('upload-button');
+    const originalText = uploadButton.innerHTML;
+    
+    try {
+        uploadButton.innerHTML = '<div class="loading"></div> Traitement...';
+        uploadButton.disabled = true;
+        
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Vérifier d'abord le statut HTTP
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erreur HTTP upload:', response.status, errorText);
+            throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+        }
+        
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error('Erreur parsing JSON upload:', jsonError);
+            throw new Error('Réponse invalide du serveur lors de l\'upload');
+        }
+        
+        if (data.success) {
+            const ocrInfo = data.ocr_used ? ' (OCR appliqué)' : data.texte_extrait ? ' (texte extrait)' : '';
+            showAlert('✅ Document uploadé et traité avec succès' + ocrInfo, 'success');
+            this.reset();
+            document.getElementById('file-label').textContent = '📎 Cliquez pour sélectionner un fichier (PDF, DOC, TXT, JPG, PNG, etc.)';
+            
+            if (document.getElementById('documents-tab').classList.contains('active')) {
+                loadAllDocuments();
+            }
+            if (document.getElementById('gestion-tab').classList.contains('active')) {
+                loadStats();
+            }
+        } else {
+            showAlert('❌ ' + (data.erreur || data.error), 'error');
+        }
+        
+    } catch (error) {
+        console.error('Erreur upload:', error);
+        showAlert('❌ Erreur lors de l\'upload: ' + error.message, 'error');
+    } finally {
+        uploadButton.innerHTML = '<span>📤</span><span>Uploader le document</span>';
+        uploadButton.disabled = false;
+    }
+});
+
+        // Gestion de l'affichage du nom du fichier
+        document.getElementById('file').addEventListener('change', function(e) {
+            const label = document.getElementById('file-label');
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                label.textContent = `📎 ${file.name} (${fileSize} MB)`;
+            } else {
+                label.textContent = '📎 Cliquez pour sélectionner un fichier (PDF, DOC, TXT, JPG, PNG, etc.)';
+            }
+        });
+
+        // Fonctions pour les documents
+        async function downloadDocument(documentId) {
+            window.open(`/download/${documentId}`, '_blank');
+        }
+
+        async function editDocument(documentId) {
+            const nouveauTitre = prompt('Nouveau titre du document :');
+            if (nouveauTitre === null) return;
+            
+            const nouvelAvocat = prompt('Nouvel avocat responsable :');
+            if (nouvelAvocat === null) return;
+            
+            const nouvelleSpecialite = prompt('Nouvelle spécialité juridique :');
+            if (nouvelleSpecialite === null) return;
+            
+            // Vérifier qu'au moins un champ est rempli
+            if (!nouveauTitre.trim() && !nouvelAvocat.trim() && !nouvelleSpecialite.trim()) {
+                showAlert('Aucune modification apportée', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/document/${documentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        titre: nouveauTitre.trim(),
+                        avocat: nouvelAvocat.trim(),
+                        specialite: nouvelleSpecialite.trim()
+                    })
+                });
+                
+                // Vérifier d'abord le statut HTTP
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Erreur HTTP:', response.status, errorText);
+                    throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+                }
+                
+                // Essayer de parser le JSON
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    console.error('Erreur parsing JSON:', jsonError);
+                    throw new Error('Réponse invalide du serveur');
+                }
+                
+                if (data.success) {
+                    showAlert('✅ Document modifié avec succès', 'success');
+                    // Recharger les données actuelles
+                    if (document.getElementById('search-tab').classList.contains('active')) {
+                        performSearch();
+                    } else {
+                        loadAllDocuments();
+                    }
+                    loadStats();
+                } else {
+                    showAlert('❌ ' + data.erreur, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erreur modification:', error);
+                showAlert('❌ Erreur lors de la modification: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteDocument(documentId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.')) {
+                try {
+                    const response = await fetch(`/api/document/${documentId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    // Vérifier d'abord le statut HTTP
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Erreur HTTP suppression:', response.status, errorText);
+                        throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    // Essayer de parser le JSON
+                    let data;
+                    try {
+                        data = await response.json();
+                    } catch (jsonError) {
+                        console.error('Erreur parsing JSON suppression:', jsonError);
+                        throw new Error('Réponse invalide du serveur lors de la suppression');
+                    }
+                    
+                    if (data.success) {
+                        showAlert('✅ Document supprimé avec succès', 'success');
+                        // Recharger les données actuelles
+                        if (document.getElementById('search-tab').classList.contains('active')) {
+                            performSearch();
+                        }
+                        loadAllDocuments();
+                        loadStats();
+                    } else {
+                        showAlert('❌ ' + (data.erreur || data.error), 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Erreur suppression:', error);
+                    showAlert('❌ Erreur lors de la suppression: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Fonction utilitaire pour échapper le HTML
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initialisation de l\'application...');
+            
+            // Configuration des événements
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    showTab(this.getAttribute('data-tab'));
+                });
+            });
+            
+            document.getElementById('search-button').addEventListener('click', performSearch);
+            document.getElementById('clear-search-button').addEventListener('click', clearSearch);
+            document.getElementById('refresh-button').addEventListener('click', loadAllDocuments);
+            document.getElementById('add-specialite-button').addEventListener('click', ajouterSpecialite);
+            document.getElementById('add-avocat-button').addEventListener('click', ajouterAvocat);
+            document.getElementById('lancer-indexation-button').addEventListener('click', lancerIndexation);
+            document.getElementById('toggle-advanced').addEventListener('click', toggleAdvancedFilters);
+            
+            // Recherche avec Entrée
+            document.getElementById('search-query').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Masquer les filtres avancés par défaut
+            document.getElementById('advanced-filters').classList.add('hidden');
+            
+            // Chargement initial
+            loadAvocats();
+            loadSpecialites();
+            loadAvocatsForUpload();
+            loadSpecialitesForUpload();
+            loadAvocatsForIndexation();
+            loadSpecialitesForIndexation();
+            loadAllDocuments();
+            loadStats();
+            loadListeSpecialites();
+            loadListeAvocats();
+            
+            console.log('🚀 Application Cabinet d\'Avocats avec OCR initialisée');
+        });
+    </script>
+</body>
+</html>
